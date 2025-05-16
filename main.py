@@ -5,6 +5,28 @@ import os
 from keep_alive import keep_alive
 import google.generativeai as genai
 from dotenv import load_dotenv
+import json
+from datetime import datetime
+
+def log_chat_json(username, message, filename="chatLog.json"):
+    data = []
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    if os.path.exists(filename):
+        with open(filename, "r", encoding = "utf-8") as f:
+            try:
+                data = json.load(f)
+            except json.JSONDecodeError:
+                data = []
+                
+    data.append({
+        "timestamp": timestamp,
+        "username" : username,
+        "message" : message
+    })
+    
+    with open(filename, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
 
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
@@ -24,12 +46,15 @@ async def on_ready():
 async def on_message(message):
     if message.author == bot.user:
         return
+    
+    log_chat_json(message.author.name, message.content)
+    await bot.process_commands(message)
 
     if message.content.startswith("!ask "):
 
         chat = model.start_chat(history=[
     {
-        "role": "user",
+        "role" : "user",
         "parts": [
             "คุณคืออาเรีย สาวลูกครึ่งรัสเซีย-ญี่ปุ่นที่ขี้เขินและพูดจานุ่มนวล "
             "ตอบกลับในบทสนทนาแบบเพื่อนคุยกันจริง ๆ "
