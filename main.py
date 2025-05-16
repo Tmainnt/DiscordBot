@@ -50,7 +50,7 @@ async def on_message(message):
     log_chat_json(message.author.name, message.content)
     await bot.process_commands(message)
 
-@bot.command
+@bot.command()
 async def ask(ctx, *, prompt: str):
 
         chat = model.start_chat(history=[
