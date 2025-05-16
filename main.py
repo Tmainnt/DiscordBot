@@ -9,6 +9,8 @@ import json
 from datetime import datetime
 
 def log_chat_json(username, message, filename="chatLog.json"):
+    today = datetime.now().strftime("%Y-%m-%d")
+    filename = f"chatLog-{today}.json"
     data = []
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
