@@ -46,13 +46,10 @@ async def on_ready():
 async def on_message(message):
     if message.author == bot.user:
         return
-    
-    log_chat_json(message.author.name, message.content)
-    await bot.process_commands(message)
 
 @bot.command()
 async def ask(ctx, *, prompt: str):
-
+        log_chat_json(ctx.author.name, prompt)
         chat = model.start_chat(history=[
     {
         "role" : "user",
@@ -73,5 +70,5 @@ async def ask(ctx, *, prompt: str):
 async def ping(ctx):
     await ctx.send("pong")
 
-keep_alive()  # เรียกใช้เว็บเซิร์ฟเวอร์
+keep_alive() # เรียกใช้เว็บเซิร์ฟเวอร์
 bot.run(DISCORD_TOKEN)
