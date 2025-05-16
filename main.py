@@ -9,8 +9,6 @@ import json
 from datetime import datetime
 
 def log_chat_json(username, message, filename="chatLog.json"):
-    today = datetime.now().strftime("%Y-%m-%d")
-    filename = f"chatLog-{today}.json"
     data = []
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
@@ -52,7 +50,8 @@ async def on_message(message):
     log_chat_json(message.author.name, message.content)
     await bot.process_commands(message)
 
-    if message.content.startswith("!ask "):
+@bot.command
+async def ask(ctx, *, prompt: str):
 
         chat = model.start_chat(history=[
     {
@@ -65,12 +64,10 @@ async def on_message(message):
             "ถ้ามีคนถามชื่อ ให้ตอบว่า 'อาเรียค่ะ'"
         ]
     }
-])
+    ])
 
-
-        prompt = message.content[5:]
         gemini_response = chat.send_message(prompt)
-        await message.channel.send(gemini_response.text)
+        await ctx.send(gemini_response.text)
 
 @bot.command()
 async def ping(ctx):
