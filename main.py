@@ -57,6 +57,9 @@ async def on_message(message):
     if message.author == bot.user:
         return
     
+    if message.content.startwith("!"):
+        await bot.process_commands(message)
+        return
     #print(f"Message received: {message.content}")
     log_chat_sheet(sheet, message.author.name, message.content)
     log_chat_txt(message.author.name, message.content) # local test
@@ -79,7 +82,7 @@ async def ask(ctx, *, prompt: str):
     ])
 
         gemini_response = chat.send_message(prompt)
-        #log_chat_sheet(sheet, ctx.author.name, prompt)
+        log_chat_sheet(sheet, ctx.author.name, prompt) 
         log_chat_sheet(sheet, "bot", gemini_response.text)
         log_chat_txt("bot", gemini_response.text) # local test
         await ctx.send(gemini_response.text)
