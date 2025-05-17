@@ -7,7 +7,21 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 import json
 from datetime import datetime
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 
+def init_sheet(json_path, sheet_name):
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    creds = ServiceAccountCredentials.from_json_keyfile_name(json_path, scope)
+    client = gspread.authorize(creds)
+    sheet = client.open(sheet_name).sheet1
+    return sheet
+
+def log_chat_sheet(sheet, username, message):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%s")
+    sheet.append_row([timestamp, username, message])
+
+# local test
 def log_chat_txt(username, message, filename="chatLog.txt"):
     timestamp = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
     print(f"Chat from {username}...")
@@ -33,13 +47,19 @@ async def on_ready():
     print(f"Logged in as {bot.user}")
     #print("Current working directory:", os.getcwd())
 
+if os.path.exists("serviceKey.json"):
+    sheet = init_sheet("serviceKey.json", "discordChatLog")
+else:
+    sheet = init_sheet("/etc/secrets/serviceKey.json", "discordChatLog")
+
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
     
     #print(f"Message received: {message.content}")
-    log_chat_txt(message.author.name, message.content)
+    log_chat_sheet(sheet, message.author.name, message.content)
+    log_chat_txt(message.author.name, message.content) # local test
     await bot.process_commands(message)
 
 @bot.command()
@@ -59,7 +79,9 @@ async def ask(ctx, *, prompt: str):
     ])
 
         gemini_response = chat.send_message(prompt)
-        log_chat_txt("bot", gemini_response.text)
+        log_chat_sheet(sheet, ctx.author.name, prompt)
+        log_chat_sheet(sheet, "bot", gemini_response.text)
+        log_chat_txt("bot", gemini_response.text) # local test
         await ctx.send(gemini_response.text)
 
 @bot.command()
