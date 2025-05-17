@@ -18,7 +18,7 @@ def init_sheet(json_path, sheet_name):
     return sheet
 
 def log_chat_sheet(sheet, username, message):
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%s")
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     sheet.append_row([timestamp, username, message])
 
 # local test
