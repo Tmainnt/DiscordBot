@@ -10,8 +10,13 @@ from datetime import datetime
 
 def log_chat_txt(username, message, filename="chatLog.txt"):
     timestamp = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
+    print(f"Chat from {username}...")
     with open(filename, "a", encoding="utf-8") as f:
-        f.write(f"[{timestamp}] {username}: {message}\n")
+        if (username == "bot"):
+            f.write(f"{username}: {message}\n")
+            f.write("----------------------------\n")
+        else:
+            f.write(f"[{timestamp}] {username}: {message}\n")
 
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
@@ -26,13 +31,14 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user}")
+    #print("Current working directory:", os.getcwd())
 
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
     
-    print(f"Message received: {message.content}")
+    #print(f"Message received: {message.content}")
     log_chat_txt(message.author.name, message.content)
     await bot.process_commands(message)
 
@@ -53,6 +59,7 @@ async def ask(ctx, *, prompt: str):
     ])
 
         gemini_response = chat.send_message(prompt)
+        log_chat_txt("bot", gemini_response.text)
         await ctx.send(gemini_response.text)
 
 @bot.command()
