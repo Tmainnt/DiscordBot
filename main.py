@@ -8,25 +8,10 @@ from dotenv import load_dotenv
 import json
 from datetime import datetime
 
-def log_chat_json(username, message, filename="chatLog.json"):
-    data = []
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
-    if os.path.exists(filename):
-        with open(filename, "r", encoding = "utf-8") as f:
-            try:
-                data = json.load(f)
-            except json.JSONDecodeError:
-                data = []
-                
-    data.append({
-        "timestamp": timestamp,
-        "username" : username,
-        "message" : message
-    })
-    
-    with open(filename, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+def log_chat_txt(username, message, filename="chatLog.txt"):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
+    with open(filename, "a", encoding="utf-8") as f:
+        f.write(f"[{timestamp}] {username}: {message}\n")
 
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
@@ -47,7 +32,8 @@ async def on_message(message):
     if message.author == bot.user:
         return
     
-    log_chat_json(message.author.name, message.content)
+    print(f"Message received: {message.content}")
+    log_chat_txt(message.author.name, message.content)
     await bot.process_commands(message)
 
 @bot.command()
