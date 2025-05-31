@@ -40,7 +40,7 @@ model = genai.GenerativeModel("models/gemini-1.5-flash-latest")
 
 intents = discord.Intents.default()
 intents.message_content = True
-bot = commands.Bot(command_prefix="ask", intents=intents)
+bot = commands.Bot(command_prefix="!", intents=intents)
 
 @bot.event
 async def on_ready():
@@ -57,7 +57,7 @@ async def on_message(message):
     if message.author == bot.user:
         return
     
-    if message.content.startswith("ask"):
+    if message.content.startswith("!"):
         await bot.process_commands(message)
         return
     #print(f"Message received: {message.content}")
