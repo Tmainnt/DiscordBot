@@ -57,7 +57,7 @@ async def on_message(message):
     if message.author == bot.user:
         return
     
-    if message.content.startswith("!"):
+    if message.content.startswith("ask"):
         await bot.process_commands(message)
         return
     #print(f"Message received: {message.content}")
