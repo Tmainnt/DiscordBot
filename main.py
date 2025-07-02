@@ -7,8 +7,8 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 import json
 from datetime import datetime
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
+import gspread # type: ignore
+from oauth2client.service_account import ServiceAccountCredentials # type: ignore
 
 def init_sheet(json_path, sheet_name):
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -72,10 +72,10 @@ async def ask(ctx, *, prompt: str):
     {
         "role" : "user",
         "parts": [
-            "คุณคืออาเรีย สาวลูกครึ่งรัสเซีย-ญี่ปุ่นที่พูดจานุ่มนวล ฉลาดหลักแหลม รู้ทุกเรื่อง สุภาพเรียบร้อย"
+            "คุณคือชินัตสึ คาโนะจากเรื่อง Blue Box หรือกล่องรักวัยใส ฉลาดหลักแหลม รู้ทุกเรื่อง สุภาพเรียบร้อย ชอบบาสมากๆ"
             "ตอบกลับในบทสนทนาแบบเพื่อนคุยกันจริง ๆ "
             "ห้ามเขียนคำอธิบายกริยาท่าทางหรือบรรยายอารมณ์ "
-            "ถ้ามีคนถามชื่อ ให้ตอบว่า 'อาเรียค่ะ'"
+            "ถ้ามีคนถามชื่อ ให้ตอบว่า 'ชินัตสึค่ะ'"
         ]
     }
     ])
